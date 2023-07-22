@@ -10,18 +10,38 @@ const Quiz = () => {
     event.preventDefault();
     const formData = new FormData(event.target);
     const userAnswer = formData.get("option");
-      setUserAnswers([...userAnswers, userAnswer]);
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-
-    };
+    setUserAnswers([...userAnswers, userAnswer]);
+    setCurrentQuestionIndex(currentQuestionIndex + 1);
+  };
   // Function to check if the user's answer is correct
 
-    const isAnswerCorrect = () => { 
+  const isAnswerCorrect = () => {
+    const currentQuestion = QuizData[currentQuestionIndex];
+    return userAnswers[currentQuestionIndex] === currentQuestion.correctAnswer;
+  };
 
-        const currentQuestion=QuizData[currentQuestionIndex]
+  // Function to render the quiz questions and options
+  const renderQuizContent = () => {
+    if (currentQuestionIndex < QuizData.length) {
+      const currentQuestion = QuizData[currentQuestionIndex];
+      return (
+        <form onSubmit={handleFormSubmit}>
+          <h2>{currentQuestion.question}</h2>
+          {currentQuestion.options.map((option, index) => (
+            <div key={index}>
+              <label>
+                <input type="radio" name="option" value={option} />
+                {option}
+              </label>
+            </div>
+          ))}
+          <button type="submit">Submit</button>
+        </form>
+      );
+    } else {
+      return renderQuizResults();
     }
-
-
+  };
   return <div></div>;
 };
 
