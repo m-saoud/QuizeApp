@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import QuizData from "../QuizData";
 
 const Quiz = ({ quizData }) => {
-  
   const [userAnswers, setUserAnswers] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
@@ -26,6 +25,11 @@ const Quiz = ({ quizData }) => {
   const renderQuizContent = () => {
     if (currentQuestionIndex < quizData.length) {
       const currentQuestion = quizData[currentQuestionIndex];
+      const isCorrect = isAnswerCorrect(
+        currentQuestion.correctAnswer,
+        userAnswers
+      );
+
       return (
         <form onSubmit={handleFormSubmit}>
           <h2>{currentQuestion.question}</h2>
@@ -37,6 +41,8 @@ const Quiz = ({ quizData }) => {
               </label>
             </div>
           ))}
+          <p>{isCorrect ? "Correct!" : "Incorrect!"}</p>
+
           <button type="submit">Submit</button>
         </form>
       );
