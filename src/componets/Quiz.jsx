@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import QuizData from "../QuizData";
 
-const Quiz = ({ quizData = [] }) => {
+const Quiz = ({ quizData }) => {
+  
   const [userAnswers, setUserAnswers] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
@@ -12,6 +14,7 @@ const Quiz = ({ quizData = [] }) => {
     setUserAnswers([...userAnswers, userAnswer]);
     setCurrentQuestionIndex(currentQuestionIndex + 1);
   };
+
   // Function to check if the user's answer is correct
 
   const isAnswerCorrect = () => {
