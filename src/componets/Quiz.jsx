@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import QuizData from "../QuizData";
-
 import "./Quiz.css";
 
 const Quiz = ({ quizData }) => {
   const [userAnswers, setUserAnswers] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isCorrect, setIsCorrect] = useState(null);
+  const [showResults, setShowResults] = useState(false);
 
   // Function to handle form submission when the user selects an option
   const handleFormSubmit = (event) => {
@@ -14,11 +14,22 @@ const Quiz = ({ quizData }) => {
     const formData = new FormData(event.target);
     const userAnswer = formData.get("option");
     setUserAnswers([...userAnswers, userAnswer]);
+
+    // Move to the next question
     setCurrentQuestionIndex(currentQuestionIndex + 1);
+
+    // Delaying the state update to allow showing the correctness message
+    setTimeout(() => {
+      // Check if all questions have been answered
+      if (currentQuestionIndex === quizData.length - 1) {
+        setShowResults(true);
+      } else {
+        setIsCorrect(null); // Reset isCorrect value for the next question
+      }
+    }, 1500); // Delay for 1.5 seconds to show the correctness message
   };
 
-  // Function to check if the user's answer is correct
-
+  // Function to check if the user's answer is correct for a specific question
   const isAnswerCorrect = (questionIndex) => {
     const currentQuestion = quizData[questionIndex];
     return userAnswers[questionIndex] === currentQuestion.correctAnswer;
@@ -28,7 +39,6 @@ const Quiz = ({ quizData }) => {
   const renderQuizContent = () => {
     if (currentQuestionIndex < quizData.length) {
       const currentQuestion = quizData[currentQuestionIndex];
-      const isCorrect = isAnswerCorrect(currentQuestionIndex);
 
       return (
         <>
@@ -42,7 +52,9 @@ const Quiz = ({ quizData }) => {
                 </label>
               </div>
             ))}
-            <p>{isCorrect ? "Correct!" : "Incorrect!"}</p>
+            {isCorrect !== null && (
+              <p>{isCorrect ? "Correct!" : "Incorrect!"}</p>
+            )}
             <button type="submit">Submit</button>
           </form>
         </>
@@ -68,14 +80,16 @@ const Quiz = ({ quizData }) => {
               <p>{question.question}</p>
               <p>Selected Answer: {userAnswers[index]}</p>
               <p>Correct Answer: {question.correctAnswer}</p>
-              {isCorrect !== null && <p>{isCorrect ? "Correct!" : "Incorrect!"}</p>}
+              <p className={isCorrect ? "correct" : "incorrect"}>
+                {isCorrect ? "Correct!" : "Incorrect!"}
+              </p>
             </div>
           );
         })}
         <p>
           Total Score: {score} out of {quizData.length}
         </p>
-        <button onClick={() => resetQuiz()}>Restart Quiz</button>
+        <button onClick={resetQuiz}>Restart Quiz</button>
       </div>
     );
   };
@@ -84,9 +98,16 @@ const Quiz = ({ quizData }) => {
   const resetQuiz = () => {
     setUserAnswers([]);
     setCurrentQuestionIndex(0);
+    setIsCorrect(null);
+    setShowResults(false);
   };
 
-  return <div className="quiz-container">{renderQuizContent()}</div>;
+  return (
+    <div className="quiz-container">
+      {showResults ? renderQuizResults() : renderQuizContent()}
+    </div>
+  );
 };
 
 export default Quiz;
+;
