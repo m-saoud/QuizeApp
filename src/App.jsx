@@ -1,15 +1,12 @@
-
-import './App.css'
-import Quiz from './componets/Quiz'
+import "./App.css";
+import QuizData from "./QuizData";
 
 function App() {
-
   return (
     <>
-      WELCOME 
-      <Quiz />
+      <QuizData />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
