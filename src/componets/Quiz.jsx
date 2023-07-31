@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import QuizeData from "../QuizData";
+import QuizData from "../QuizData";
 
-const Quiz = ({quizData}) => {
+import "./Quiz.css";
+
+const Quiz = ({ quizData }) => {
   const [userAnswers, setUserAnswers] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [isCorrect, setIsCorrect] = useState(null);
 
   // Function to handle form submission when the user selects an option
   const handleFormSubmit = (event) => {
@@ -16,35 +19,33 @@ const Quiz = ({quizData}) => {
 
   // Function to check if the user's answer is correct
 
-  const isAnswerCorrect = () => {
-    const currentQuestion = quizData[currentQuestionIndex];
-    return userAnswers[currentQuestionIndex] === currentQuestion.correctAnswer;
+  const isAnswerCorrect = (questionIndex) => {
+    const currentQuestion = quizData[questionIndex];
+    return userAnswers[questionIndex] === currentQuestion.correctAnswer;
   };
 
   // Function to render the quiz questions and options
   const renderQuizContent = () => {
     if (currentQuestionIndex < quizData.length) {
       const currentQuestion = quizData[currentQuestionIndex];
-      const isCorrect = isAnswerCorrect(
-        currentQuestion.correctAnswer,
-        userAnswers
-      );
+      const isCorrect = isAnswerCorrect(currentQuestionIndex);
 
       return (
-        <form onSubmit={handleFormSubmit}>
-          <h2>{currentQuestion.question}</h2>
-          {currentQuestion.options.map((option, index) => (
-            <div key={index}>
-              <label>
-                <input type="radio" name="option" value={option} />
-                {option}
-              </label>
-            </div>
-          ))}
-          <p>{isCorrect ? "Correct!" : "Incorrect!"}</p>
-
-          <button type="submit">Submit</button>
-        </form>
+        <>
+          <form onSubmit={handleFormSubmit}>
+            <h2>{currentQuestion.question}</h2>
+            {currentQuestion.options.map((option, index) => (
+              <div key={index}>
+                <label>
+                  <input type="radio" name="option" value={option} />
+                  {option}
+                </label>
+              </div>
+            ))}
+            <p>{isCorrect ? "Correct!" : "Incorrect!"}</p>
+            <button type="submit">Submit</button>
+          </form>
+        </>
       );
     } else {
       return renderQuizResults();
@@ -67,7 +68,7 @@ const Quiz = ({quizData}) => {
               <p>{question.question}</p>
               <p>Selected Answer: {userAnswers[index]}</p>
               <p>Correct Answer: {question.correctAnswer}</p>
-              <p>{isCorrect ? "Correct" : "Incorrect"}</p>
+              {isCorrect !== null && <p>{isCorrect ? "Correct!" : "Incorrect!"}</p>}
             </div>
           );
         })}
