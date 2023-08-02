@@ -7,13 +7,20 @@ const Quiz = ({ quizData }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isCorrect, setIsCorrect] = useState(null);
   const [showResults, setShowResults] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
 
   // Function to handle form submission when the user selects an option
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const userAnswer = formData.get("option");
-    setUserAnswers([...userAnswers, userAnswer]);
+    if (!formSubmitted) {
+      const formData = new FormData(event.target);
+      const userAnswer = formData.get("option");
+      if (userAnswer) {
+        setUserAnswers([...userAnswers, userAnswer]);
+
+    // Check if the user's answer is correct for the current question
+    setIsCorrect(isAnswerCorrect(currentQuestionIndex));
 
     // Move to the next question
     setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -21,14 +28,19 @@ const Quiz = ({ quizData }) => {
     // Delaying the state update to allow showing the correctness message
     setTimeout(() => {
       // Check if all questions have been answered
-      if (currentQuestionIndex === quizData.length - 1) {
+      if (currentQuestionIndex === QuizData.length - 1) {
         setShowResults(true);
       } else {
         setIsCorrect(null); // Reset isCorrect value for the next question
       }
     }, 1500); // Delay for 1.5 seconds to show the correctness message
-  };
 
+    setFormSubmitted(true);
+  } else {
+    alert("Please select an answer before submitting.");
+  }
+}
+};
   // Function to check if the user's answer is correct for a specific question
   const isAnswerCorrect = (questionIndex) => {
     const currentQuestion = quizData[questionIndex];
@@ -71,7 +83,7 @@ const Quiz = ({ quizData }) => {
       <div>
         <h2>Quiz Results</h2>
         {quizData.map((question, index) => {
-          const isCorrect = userAnswers[index] === question.correctAnswer;
+          const isCorrect = isAnswerCorrect(index);
           if (isCorrect) {
             score++;
           }
@@ -100,6 +112,7 @@ const Quiz = ({ quizData }) => {
     setCurrentQuestionIndex(0);
     setIsCorrect(null);
     setShowResults(false);
+    setFormSubmitted(false);
   };
 
   return (
