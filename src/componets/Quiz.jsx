@@ -7,44 +7,46 @@ const Quiz = ({ quizData }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isCorrect, setIsCorrect] = useState(null);
   const [showResults, setShowResults] = useState(false);
-  const [formSubmitted, setFormSubmitted] = useState(false);
-
+  const [disableSubmit, setDisableSubmit] = useState(true);
 
   // Function to handle form submission when the user selects an option
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    if (!formSubmitted) {
-      const formData = new FormData(event.target);
-      const userAnswer = formData.get("option");
-      if (userAnswer) {
-        setUserAnswers([...userAnswers, userAnswer]);
+    const formData = new FormData(event.target);
+    const userAnswer = formData.get("option");
+    if (userAnswer) {
+      setUserAnswers([...userAnswers, userAnswer]);
 
-    // Check if the user's answer is correct for the current question
-    setIsCorrect(isAnswerCorrect(currentQuestionIndex));
+      // Check if the user's answer is correct for the current question
+      setIsCorrect(isAnswerCorrect(currentQuestionIndex));
 
-    // Move to the next question
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
+      // Move to the next question
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
 
-    // Delaying the state update to allow showing the correctness message
-    setTimeout(() => {
-      // Check if all questions have been answered
-      if (currentQuestionIndex === QuizData.length - 1) {
-        setShowResults(true);
-      } else {
-        setIsCorrect(null); // Reset isCorrect value for the next question
-      }
-    }, 1500); // Delay for 1.5 seconds to show the correctness message
+      // Delaying the state update to allow showing the correctness message
+      setTimeout(() => {
+        // Check if all questions have been answered
+        if (currentQuestionIndex === quizData.length - 1) {
+          setShowResults(true);
+        } else {
+          setIsCorrect(null); // Reset isCorrect value for the next question
+          setDisableSubmit(true); // Disable the submit button for the next question
+        }
+      }, 1500); // Delay for 1.5 seconds to show the correctness message
+    } else {
+      alert("Please select an answer before submitting.");
+    }
+  };
 
-    setFormSubmitted(true);
-  } else {
-    alert("Please select an answer before submitting.");
-  }
-}
-};
   // Function to check if the user's answer is correct for a specific question
   const isAnswerCorrect = (questionIndex) => {
     const currentQuestion = quizData[questionIndex];
     return userAnswers[questionIndex] === currentQuestion.correctAnswer;
+  };
+
+  // Function to handle the user's selection and enable the submit button
+  const handleSelection = () => {
+    setDisableSubmit(false);
   };
 
   // Function to render the quiz questions and options
@@ -59,7 +61,12 @@ const Quiz = ({ quizData }) => {
             {currentQuestion.options.map((option, index) => (
               <div key={index}>
                 <label>
-                  <input type="radio" name="option" value={option} />
+                  <input
+                    type="radio"
+                    name="option"
+                    value={option}
+                    onClick={handleSelection}
+                    />
                   {option}
                 </label>
               </div>
@@ -67,7 +74,9 @@ const Quiz = ({ quizData }) => {
             {isCorrect !== null && (
               <p>{isCorrect ? "Correct!" : "Incorrect!"}</p>
             )}
-            <button type="submit">Submit</button>
+            <button type="submit" disabled={disableSubmit}>
+              Submit
+            </button>
           </form>
         </>
       );
@@ -112,7 +121,7 @@ const Quiz = ({ quizData }) => {
     setCurrentQuestionIndex(0);
     setIsCorrect(null);
     setShowResults(false);
-    setFormSubmitted(false);
+    setDisableSubmit(true);
   };
 
   return (
@@ -123,4 +132,3 @@ const Quiz = ({ quizData }) => {
 };
 
 export default Quiz;
-;
