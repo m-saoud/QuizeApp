@@ -1,4 +1,14 @@
 /* Quiz.css */
+/* Style for the quiz options as a list */
+.quiz-options {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .quiz-options li {
+    margin-bottom: 10px;
+  }
+  
 .quiz-container {
     max-width: 600px;
     margin: 0 auto;

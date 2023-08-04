@@ -57,33 +57,37 @@ const Quiz = ({ quizData }) => {
       return (
         <>
           <form onSubmit={handleFormSubmit}>
-            <h2>{currentQuestion.question}</h2>
+          <h2>{currentQuestion.question}</h2>
+          <ul className="quiz-options">
             {currentQuestion.options.map((option, index) => (
-              <div key={index}>
+              <li key={index}>
                 <label>
                   <input
                     type="radio"
                     name="option"
                     value={option}
                     onClick={handleSelection}
-                    />
+                  />
                   {option}
                 </label>
-              </div>
+              </li>
             ))}
-            {isCorrect !== null && (
-              <p>{isCorrect ? "Correct!" : "Incorrect!"}</p>
-            )}
-            <button type="submit" disabled={disableSubmit}>
-              Submit
-            </button>
-          </form>
-        </>
-      );
-    } else {
-      return renderQuizResults();
-    }
-  };
+          </ul>
+          {isCorrect !== null && (
+            <p className={isCorrect ? "correct" : "incorrect"}>
+              {isCorrect ? "Correct!" : "Incorrect!"}
+            </p>
+          )}
+          <button type="submit" disabled={disableSubmit}>
+            Submit
+          </button>
+        </form>
+      </>
+    );
+  } else {
+    return renderQuizResults();
+  }
+};
 
   // Function to render the quiz results after the quiz is completed
   const renderQuizResults = () => {
